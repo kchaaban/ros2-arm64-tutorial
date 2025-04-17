@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+
+{% block title %}Error - ROS2 Humble on M1 Mac{% endblock %}
+
+{% block header %}Error{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="alert alert-danger">
+        <h4 class="alert-heading">An error occurred</h4>
+        <p>{{ message }}</p>
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="/" class="btn btn-primary">Return to Homepage</a>
+    </div>
+</div>
+{% endblock %}

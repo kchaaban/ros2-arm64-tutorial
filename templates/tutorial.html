@@ -1,0 +1,35 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ title }} - ROS2 Humble on ARM64{% endblock %}
+
+{% block header %}{{ title }}{% endblock %}
+
+{% block sidebar %}
+<div class="mb-4">
+    <a href="/tutorial/" class="btn btn-outline-secondary btn-sm">← Back to Index</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            {{ content|safe }}
+            
+            <div class="prev-next-links">
+                {% if prev %}
+                <a href="/tutorial/{{ prev.path }}" class="btn btn-outline-primary">← {{ prev.title }}</a>
+                {% else %}
+                <span></span>
+                {% endif %}
+                
+                {% if next %}
+                <a href="/tutorial/{{ next.path }}" class="btn btn-outline-primary">{{ next.title }} →</a>
+                {% else %}
+                <span></span>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'layout.html' %}
+
+{% block title %}Code: {{ filepath }} - ROS2 Humble on ARM64{% endblock %}
+
+{% block header %}Code: {{ filepath }}{% endblock %}
+
+{% block sidebar %}
+<div class="mb-4">
+    <a href="/code/" class="btn btn-outline-secondary btn-sm">← Back to Code Explorer</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/code/">ros2_m1_sim</a></li>
+            {% for part in filepath.split('/')[:-1] %}
+                {% if part %}
+                <li class="breadcrumb-item">{{ part }}</li>
+                {% endif %}
+            {% endfor %}
+            <li class="breadcrumb-item active">{{ filepath.split('/')[-1] }}</li>
+        </ol>
+    </nav>
+    
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>{{ filepath }}</span>
+        </div>
+        <div class="card-body p-0">
+            <pre><code class="language-{{ language }}">{{ content | replace('    ', '  ') }}</code></pre>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,19 @@
+/**:
+  ros__parameters:
+    use_sim_time: false
+
+simple_simulation:
+  ros__parameters:
+    wheel_radius: 0.1  # meters
+    wheel_separation: 0.5  # meters
+    max_velocity: 1.0  # m/s
+    max_acceleration: 0.5  # m/s^2
+    friction: 0.1  # damping factor
+
+robot_publisher:
+  ros__parameters:
+    publish_rate: 10.0  # Hz
+
+robot_subscriber:
+  ros__parameters:
+    logging_level: INFO

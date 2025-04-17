@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3. Creating a ROS2 Package - ROS2 Humble on ARM64</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>3. Creating a ROS2 Package</h1>
+            <a href="../index.html" class="home-link">Home</a>
+        </div>
+        
+        <div class="content">
+            <h1 id="3-creating-a-ros2-package">3. Creating a ROS2 Package</h1>
+
+<p>Now that you have a ROS2 workspace set up, it's time to create a package for our simulation. In ROS2, packages are the organizational unit for your code, which can contain nodes, libraries, datasets, or other ROS2-related files.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+<li>Completed <a href="02_workspace_setup.md">Setting up a ROS2 Workspace</a></li>
+<li>Basic understanding of Python (as we'll be creating Python-based nodes)</li>
+</ul>
+
+<h2 id="package-types-in-ros2">Package Types in ROS2</h2>
+
+<p>ROS2 supports two primary types of packages:</p>
+
+<ol>
+<li><strong>CMake packages</strong>: Used for C++ code or mixed C++/Python code</li>
+<li><strong>Python packages</strong>: Easier to set up for Python-only code</li>
+</ol>
+
+<p>For our simulation, we'll create a Python package since we'll be writing our nodes in Python.</p>
+
+<h2 id="creating-a-new-package">Creating a New Package</h2>
+
+<ol>
+<li><p>Start your ROS2 Docker environment and navigate to your workspace:</p>
+
+<pre><code class="language-bash">cd /root/ros2_humble_ws
+</code></pre></li>
+<li><p>Create a new Python package:</p>
+
+<pre><code class="language-bash">ros2 pkg create --build-type ament_python --node-name robot_publisher ros2_m1_sim
+</code></pre>
+
+<p>This command creates a new package named <code>ros2_m1_sim</code> with an initial node called <code>robot_publisher</code>.</p></li>
+<li><p>Examine the package structure:</p>
+
+<pre><code class="language-bash">ls -la src/ros2_m1_sim/
+</code></pre>
+
+<p>You should see the following structure:</p>
+
+<pre><code class="language-bash">ros2_m1_sim/
+├── package.xml
+├── resource/
+├── ros2_m1_sim/
+│   ├── __init__.py
+│   └── robot_publisher.py
+├── setup.cfg
+├── setup.py
+└── test/
+</code></pre></li>
+</ol>
+
+<h2 id="understanding-package-files">Understanding Package Files</h2>
+
+<h3 id="packagexml">package.xml</h3>
+
+<p>This file contains metadata about your package, such as dependencies, version, and maintainer information.</p>
+
+<p>Open the file to see its contents:
+```
+cat src/ros2<em>m1</em>sim/package.xml</p>
+
+        </div>
+        
+        <div class="navigation">
+            <div class="prev">
+                <a href="02_workspace_setup.html">« 2. Setting up a ROS2 Workspace</a>
+            </div>
+            <div class="home">
+                <a href="../index.html">Tutorial Index</a>
+            </div>
+            <div class="next">
+                <a href="04_simulation_nodes.html">4. Implementing Simulation Nodes »</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

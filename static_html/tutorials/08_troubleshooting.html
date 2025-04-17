@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>8. Troubleshooting M1-specific Issues - ROS2 Humble on ARM64</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>8. Troubleshooting M1-specific Issues</h1>
+            <a href="../index.html" class="home-link">Home</a>
+        </div>
+        
+        <div class="content">
+            <h1 id="8-troubleshooting-m1-specific-issues">8. Troubleshooting M1-specific Issues</h1>
+
+<p>Running ROS2 Humble on Apple M1 hardware can present unique challenges due to the ARM architecture. This section covers common issues specific to M1 Macs and how to resolve them.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+<li>Completed the previous sections of the tutorial</li>
+<li>Running the simulation on an M1 Apple Mac</li>
+</ul>
+
+<h2 id="common-issues-and-solutions">Common Issues and Solutions</h2>
+
+<h3 id="1-displaygui-issues">1. Display/GUI Issues</h3>
+
+<h4 id="x11-forwarding-problems">X11 Forwarding Problems</h4>
+
+<p><strong>Issue</strong>: X11 applications like rviz2 or rqt don't display properly.</p>
+
+<p><strong>Solution</strong>:
+1. Install XQuartz on your Mac:
+   <pre><code class="language-bash"># On your Mac (not in Docker)
+brew install --cask xquartz
+   </code></pre></p>
+
+<ol start="2">
+<li><p>Configure XQuartz to allow connections from network clients:</p>
+
+<ul>
+<li>Open XQuartz</li>
+<li>Go to XQuartz &gt; Preferences &gt; Security</li>
+<li>Check "Allow connections from network clients"</li>
+<li>Restart XQuartz</li>
+</ul></li>
+<li><p>Allow local connections:</p>
+
+<pre><code class="language-bash"># On your Mac (not in Docker)
+xhost +localhost
+</code></pre></li>
+<li><p>Start Docker with the proper display settings:</p>
+
+<pre><code class="language-bash">docker run -it --name ros2_humble \
+  -e DISPLAY=host.docker.internal:0 \
+  -v ~/ros2_humble_ws:/root/ros2_humble_ws \
+  osrf/ros:humble-desktop
+</code></pre></li>
+</ol>
+
+<h4 id="using-vnc-instead-of-x11">Using VNC Instead of X11</h4>
+
+<p>If X11 is too problematic, use VNC:</p>
+
+<ol>
+<li><p>Install a VNC server in Docker:</p>
+
+<pre><code class="language-bash">apt update &amp;&amp; apt install -y tigervnc-standalone-server
+</code></pre></li>
+<li><p>Start the VNC server:</p>
+
+<pre><code class="language-bash">vncserver :1 -geometry 1280x800 -depth 24
+</code></pre></li>
+<li><p>Install a VNC client on your Mac (e.g., RealVNC, TightVNC) or use the built-in Screen Sharing app</p></li>
+<li><p>Connect to localhost:5901</p></li>
+</ol>
+
+<h3 id="2-performance-issues">2. Performance Issues</h3>
+
+<h4 id="high-cpu-usage">High CPU Usage</h4>
+
+<p><strong>Issue</strong>: The simulation consumes excessive CPU resources.</p>
+
+<p><strong>Solution</strong>:
+1. Limit the simulation rate:
+   <pre><code class="language-bash"># Edit the simulation node to lower the update rate
+nano src/ros2_m1_sim/ros2_m1_sim/simple_simulation.py
+
+# Change the timer period from 0.01 to 0.05 for example
+self.sim_timer_period = 0.05  # 20 Hz instead of 100 Hz
+   </code></pre></p>
+
+<ol start="2">
+<li>Allocate more resources to Docker:
+<ul>
+<li>Open Docker Desktop</li>
+<li>Go to Preferences &gt; Resources</li>
+<li>Increase CPU and memory allocation</li>
+</ul></li>
+</ol>
+
+<h4 id="slow-docker-startup">Slow Docker Startup</h4>
+
+<p><strong>Issue</strong>: Docker container takes a long time to start.</p>
+
+<p><strong>Solution</strong>:
+1. Use a lighter Docker image:
+   <pre><code class="language-bash"># Use the ros-base image instead of desktop
+docker pull osrf/ros:humble-ros-base
+   </code></pre></p>
+
+<ol start="2">
+<li>Pre-build your workspace outside the container:
+<pre><code class="language-bash"># In your Docker container
+cd /root/ros2_humble_ws
+colcon build
+</code></pre></li>
+</ol>
+
+<h3 id="3-rosetta-2-compatibility-issues">3. Rosetta 2 Compatibility Issues</h3>
+
+<p><strong>Issue</strong>: Some x86_64 binaries don't work properly under Rosetta 2.</p>
+
+<p><strong>Solution</strong>:
+1. Prioritize ARM64 native packages:
+   <pre><code class="language-bash"># Check if packages have ARM64 versions
+apt search &lt;package-name&gt;
+   </code></pre></p>
+
+<ol start="2">
+<li>Build problematic packages from source:
+<pre><code class="language-bash">mkdir -p ~/ros2_src_ws/src
+cd ~/ros2_src_ws
+git clone https://github.com/ros2/some_package src/some_package
+colcon build --packages-select some_package
+</code></pre></li>
+</ol>
+
+<h3 id="4-native-installation-issues">4. Native Installation Issues</h3>
+
+<p><strong>Issue</strong>: Installing ROS2 natively on M1 Mac fails.</p>
+
+<p><strong>Solution</strong>:
+1. Use Homebrew and rosdep:
+   <pre><code class="language-bash"># Install Homebrew (if not already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install ROS2 dependencies
+brew install asio tinyxml2 eigen pcre poco opencv python@3.9
+
+# Install pip dependencies
+pip3 install lark empy catkin_pkg numpy pydot
+   </code></pre></p>
+
+<ol start="2">
+<li>Build ROS2 from source for ARM64:
+<pre><code class="language-bash">mkdir -p ~/ros2_humble_src/src
+cd ~/ros2_humble_src
+vcs import --input https://raw.githubusercontent.com/ros2/ros2/humble/ros2.repos src
+
+# Use rosdep to install dependencies
+sudo rosdep init
+rosdep update
+rosdep install --from-paths src --ignore-src -y --skip-keys "fastcdr rti-connext-dds-6.0.1 urdfdom_headers"
+
+# Build with --packages-skip for problematic packages
+colcon build --symlink-install --packages-skip-by-dep python_qt_binding
+</code></pre></li>
+</ol>
+
+<h3 id="5-docker-arm64-image-availability">5. Docker ARM64 Image Availability</h3>
+
+<p><strong>Issue</strong>: Some ROS2 packages don't have ARM64 Docker images.</p>
+
+<p><strong>Solution</strong>:
+1. Check for multi-arch support:
+   <pre><code class="language-bash">docker manifest inspect osrf/ros:humble-desktop
+   </code></pre></p>
+
+<ol start="2">
+<li><p>Build your own ARM64 Docker image:</p>
+
+<pre><code class="language-bash"># Create a Dockerfile
+nano Dockerfile
+</code></pre>
+
+<p>Add the following content:</p>
+
+<pre><code class="language-bash">FROM ubuntu:22.04
+
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install necessary packages
+RUN apt-get update &amp;&amp; apt-get install -y \
+    curl \
+    gnupg2 \
+    lsb-release \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+# Setup sources.list
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release &amp;&amp; echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list &gt; /dev/null
+
+# Install ROS2 Humble
+RUN apt-get update &amp;&amp; apt-get install -y \
+    ros-humble-ros-base \
+    python3-colcon-common-extensions \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+
+# Setup environment
+RUN echo "source /opt/ros/humble/setup.bash" &gt;&gt; ~/.bashrc
+
+CMD ["bash"]
+</code></pre>
+
+<p>Build and run the image:</p>
+
+<pre><code class="language-bash">docker build -t ros2_humble_arm64 .
+docker run -it ros2_humble_arm64
+</code></pre></li>
+</ol>
+
+<h3 id="6-networking-issues">6. Networking Issues</h3>
+
+<p><strong>Issue</strong>: ROS2 nodes can't discover each other across devices.</p>
+
+<p><strong>Solution</strong>:
+1. Set the ROS<em>DOMAIN</em>ID:
+   <pre><code class="language-bash"># In your .bashrc
+export ROS_DOMAIN_ID=30  # Choose any number from 0-101
+   </code></pre></p>
+
+<ol start="2">
+<li><p>Configure network settings:</p>
+
+<pre><code class="language-bash"># Allow Docker to use host network
+docker run -it --network=host osrf/ros:humble-desktop
+</code></pre></li>
+<li><p>Configure Fast DDS:</p>
+
+<pre><code class="language-bash"># Create a FastDDS config file
+nano ~/ros2_humble_ws/fastdds.xml
+</code></pre>
+
+<p>Add the following content:</p>
+
+<pre><code class="language-bash">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;dds&gt;
+  &lt;profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles"&gt;
+    &lt;transport_descriptors&gt;
+      &lt;transport_descriptor&gt;
+        &lt;transport_id&gt;udp_transport&lt;/transport_id&gt;
+        &lt;type&gt;UDPv4&lt;/type&gt;
+      &lt;/transport_descriptor&gt;
+    &lt;/transport_descriptors&gt;
+
+    &lt;participant profile_name="default_profile" is_default_profile="true"&gt;
+      &lt;rtps&gt;
+        &lt;builtin&gt;
+          &lt;discovery_config&gt;
+            &lt;initial_announcements&gt;
+              &lt;count&gt;5&lt;/count&gt;
+              &lt;period&gt;
+                &lt;sec&gt;1&lt;/sec&gt;
+                &lt;nanosec&gt;0&lt;/nanosec&gt;
+              &lt;/period&gt;
+            &lt;/initial_announcements&gt;
+            &lt;leaseDuration&gt;
+              &lt;sec&gt;10&lt;/sec&gt;
+              &lt;nanosec&gt;0&lt;/nanosec&gt;
+            &lt;/leaseDuration&gt;
+          &lt;/discovery_config&gt;
+        &lt;/builtin&gt;
+        &lt;userTransports&gt;
+          &lt;transport_id&gt;udp_transport&lt;/transport_id&gt;
+        &lt;/userTransports&gt;
+      &lt;/rtps&gt;
+    &lt;/participant&gt;
+  &lt;/profiles&gt;
+&lt;/dds&gt;
+</code></pre>
+
+<p>Set the environment variable:</p>
+
+<pre><code class="language-bash">export FASTRTPS_DEFAULT_PROFILES_FILE=$HOME/ros2_humble_ws/fastdds.xml
+</code></pre></li>
+</ol>
+
+<h3 id="7-resource-limitations">7. Resource Limitations</h3>
+
+<p><strong>Issue</strong>: Docker container runs out of resources.</p>
+
+<p><strong>Solution</strong>:
+1. Optimize your Docker resource allocation:
+   - Open Docker Desktop on your Mac
+   - Go to Preferences &gt; Resources
+   - Adjust CPU, Memory, and Swap</p>
+
+<ol start="2">
+<li>Monitor resource usage:
+<pre><code class="language-bash"># Inside Docker container
+apt update &amp;&amp; apt install -y htop
+htop
+</code></pre></li>
+</ol>
+
+<h2 id="advanced-m1-specific-tips">Advanced M1-specific Tips</h2>
+
+<h3 id="1-using-rosetta-for-specific-applications">1. Using Rosetta for Specific Applications</h3>
+
+<p>If a particular tool only works with x86_64, you can use Rosetta 2 selectively:</p>
+
+<ol>
+<li><p>Install Rosetta 2 (if not already installed):</p>
+
+<pre><code class="language-bash">softwareupdate --install-rosetta
+</code></pre></li>
+<li><p>Run a specific command with Rosetta:</p>
+
+<pre><code class="language-bash">arch -x86_64 &lt;command&gt;
+</code></pre></li>
+</ol>
+
+<h3 id="2-multi-architecture-development">2. Multi-architecture Development</h3>
+
+<p>If you need to develop for both ARM64 and x86_64:</p>
+
+<ol>
+<li><p>Create separate workspaces:</p>
+
+<pre><code class="language-bash">mkdir -p ~/ros2_arm64_ws
+mkdir -p ~/ros2_x86_64_ws
+</code></pre></li>
+<li><p>Use Docker with platform flag:</p>
+
+<pre><code class="language-bash"># ARM64 (native)
+docker run --platform linux/arm64 -it osrf/ros:humble-desktop
+
+# x86_64 (emulated)
+docker run --platform linux/amd64 -it osrf/ros:humble-desktop
+</code></pre></li>
+</ol>
+
+<h3 id="3-using-gpu-acceleration">3. Using GPU Acceleration</h3>
+
+<p>For computationally intensive applications:</p>
+
+<ol>
+<li><p>Check Metal support in your application:</p>
+
+<pre><code class="language-bash"># Most computer vision libraries can use Metal:
+pip install tensorflow-metal  # For TensorFlow
+</code></pre></li>
+<li><p>Use GPU-accelerated Docker images:</p>
+
+<pre><code class="language-bash"># Example for PyTorch
+docker pull pytorch/pytorch:latest
+</code></pre></li>
+</ol>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Congratulations! You've completed the entire tutorial on setting up and running a ROS2 Humble simulation on an M1 Apple Mac. You've learned:</p>
+
+<ol>
+<li>How to install ROS2 Humble in Docker on M1 hardware</li>
+<li>How to set up a ROS2 workspace</li>
+<li>How to create a ROS2 package</li>
+<li>How to implement simulation nodes</li>
+<li>How to set up visualization</li>
+<li>How to create launch files</li>
+<li>How to build and run the simulation</li>
+<li>How to troubleshoot M1-specific issues</li>
+</ol>
+
+<p>You now have a solid foundation for developing ROS2 applications on Apple Silicon hardware. Happy robotics development!</p>
+
+        </div>
+        
+        <div class="navigation">
+            <div class="prev">
+                <a href="07_building_running.html">« 7. Building and Running the Simulation</a>
+            </div>
+            <div class="home">
+                <a href="../index.html">Tutorial Index</a>
+            </div>
+            <div class="next">
+                
+            </div>
+        </div>
+    </div>
+</body>
+</html>

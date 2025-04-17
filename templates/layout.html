@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ROS2 Humble on ARM64 Tutorial{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <style>
+        .sidebar {
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+        .content {
+            overflow-y: auto;
+            max-width: 950px;
+            margin: 0 auto;
+        }
+        pre {
+            border-radius: 6px;
+            padding: 12px;
+            background-color: #282c34;
+            max-width: 100%;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+            border: 1px solid #444;
+        }
+        pre code {
+            color: #abb2bf;
+            font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        code:not(pre code) {
+            color: var(--bs-info);
+            background-color: rgba(30, 30, 30, 0.5);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .hljs-comment, .hljs-quote {
+            color: #5c6370;
+            font-style: italic;
+        }
+        .hljs-keyword, .hljs-selector-tag {
+            color: #c678dd;
+        }
+        .hljs-string, .hljs-subst {
+            color: #98c379;
+        }
+        .hljs-number, .hljs-literal {
+            color: #d19a66;
+        }
+        .hljs-function, .hljs-title {
+            color: #61afef;
+        }
+        .hljs-tag, .hljs-name {
+            color: #e06c75;
+        }
+        /* Command line styling */
+        .command-line {
+            position: relative;
+            padding-left: 15px;
+        }
+        .command-line:before {
+            content: ">>";
+            position: absolute;
+            left: 0;
+            color: #98c379;
+        }
+        blockquote {
+            border-left: 4px solid var(--bs-secondary);
+            padding-left: 1rem;
+            color: var(--bs-secondary);
+        }
+        .prev-next-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+        .toc-link {
+            display: block;
+            padding: 0.25rem 0;
+            text-decoration: none;
+        }
+        .toc-link:hover {
+            text-decoration: underline;
+        }
+        .toc-link.active {
+            font-weight: bold;
+            color: var(--bs-primary);
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .file-tree {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        .file-tree li {
+            margin: 5px 0;
+        }
+        .directory:before {
+            content: "📁 ";
+        }
+        .file:before {
+            content: "📄 ";
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-body-tertiary sidebar">
+                <div class="position-sticky pt-3">
+                    <h5 class="px-3 mt-4 mb-3 text-muted">ROS2 on ARM64</h5>
+                    <hr>
+                    <div class="px-3">
+                        <a href="/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none">
+                            <span class="fs-5 fw-semibold">Tutorial Index</span>
+                        </a>
+                        <a href="/code/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none">
+                            <span class="fs-5 fw-semibold">Code Explorer</span>
+                        </a>
+                    </div>
+                    <hr>
+                    <div class="px-3">
+                        {% block sidebar %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 content py-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">{% block header %}ROS2 Humble on ARM64 Tutorial{% endblock %}</h1>
+                </div>
+                
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/bash.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.querySelectorAll('pre code').forEach((block) => {
+                hljs.highlightElement(block);
+            });
+            
+            // Replace bash prompts with >>
+            document.querySelectorAll('code.language-bash').forEach((block) => {
+                const content = block.innerHTML;
+                const updatedContent = content.replace(/(\$\s+)/g, '>> ');
+                block.innerHTML = updatedContent;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5. Setting up Visualization - ROS2 Humble on ARM64</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>5. Setting up Visualization</h1>
+            <a href="../index.html" class="home-link">Home</a>
+        </div>
+        
+        <div class="content">
+            <h1 id="5-setting-up-visualization">5. Setting up Visualization</h1>
+
+<p>A key aspect of robotics simulation is visualization. This section will guide you through setting up visualization tools to view your ROS2 simulation on the M1 Mac.</p>
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+<li>Completed <a href="04_simulation_nodes.md">Implementing Simulation Nodes</a></li>
+<li>ROS2 Humble Docker environment running</li>
+</ul>
+
+<h2 id="ros2-visualization-tools">ROS2 Visualization Tools</h2>
+
+<p>ROS2 offers several visualization tools:</p>
+
+<ol>
+<li><strong>RViz2</strong>: The primary 3D visualization tool for ROS2</li>
+<li><strong>rqt</strong>: A Qt-based framework for ROS GUIs</li>
+<li><strong>rqt_graph</strong>: Tool to visualize the ROS2 computation graph</li>
+<li><strong>turtlesim</strong>: Simple 2D simulator useful for basic demonstrations</li>
+</ol>
+
+<p>For our simulation, we'll use rqt for debugging and system analysis, and we'll add a simple visualization node to demonstrate how the robot moves.</p>
+
+<h2 id="setting-up-rqt">Setting up RQT</h2>
+
+<p>RQT is a powerful tool for debugging and analyzing ROS2 systems. Let's use it to monitor our simulation:</p>
+
+<ol>
+<li>Make sure you have sourced your workspace:
+```
+source /root/ros2<em>humble</em>ws/install/setup.bash</li>
+</ol>
+
+        </div>
+        
+        <div class="navigation">
+            <div class="prev">
+                <a href="04_simulation_nodes.html">« 4. Implementing Simulation Nodes</a>
+            </div>
+            <div class="home">
+                <a href="../index.html">Tutorial Index</a>
+            </div>
+            <div class="next">
+                <a href="06_launch_files.html">6. Creating Launch Files »</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,104 @@
+{% extends 'layout.html' %}
+
+{% block title %}Code Explorer - ROS2 Humble on ARM64{% endblock %}
+
+{% block header %}Code Explorer{% endblock %}
+
+{% block sidebar %}
+<div class="mb-4">
+    <a href="/" class="btn btn-outline-secondary btn-sm">← Back to Tutorial</a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>ROS2 ARM64 Simulation Package</h2>
+    
+    <p class="lead">
+        Explore the source code for the ROS2 simulation package developed in this tutorial.
+        The code is organized according to standard ROS2 package structure.
+    </p>
+    
+    <div class="card">
+        <div class="card-header">
+            File Explorer
+        </div>
+        <div class="card-body">
+            {% macro render_tree_node(node) %}
+                {% if node.type == 'dir' %}
+                    <li class="directory">
+                        <strong>{{ node.name }}</strong>
+                        {% if node.children %}
+                            <ul class="file-tree">
+                                {% for child in node.children %}
+                                    {{ render_tree_node(child) }}
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
+                {% else %}
+                    <li class="file">
+                        <a href="/code/{{ node.path[node.path.find('ros2_m1_sim/') + 12:] }}">{{ node.name }}</a>
+                    </li>
+                {% endif %}
+            {% endmacro %}
+            
+            <ul class="file-tree">
+                {{ render_tree_node(structure) }}
+            </ul>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Key Components</div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Robot Publisher</strong>
+                            <p class="small mb-0">Publishes simulated robot data</p>
+                            <a href="/code/ros2_m1_sim/robot_publisher.py" class="small">View Source</a>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Robot Subscriber</strong>
+                            <p class="small mb-0">Subscribes to and processes robot data</p>
+                            <a href="/code/ros2_m1_sim/robot_subscriber.py" class="small">View Source</a>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Simple Simulation</strong>
+                            <p class="small mb-0">2D robot simulation with physics</p>
+                            <a href="/code/ros2_m1_sim/simple_simulation.py" class="small">View Source</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">Configuration Files</div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Launch File</strong>
+                            <p class="small mb-0">Configures the simulation startup</p>
+                            <a href="/code/launch/simulation.launch.py" class="small">View Source</a>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Simulation Parameters</strong>
+                            <p class="small mb-0">Configuration parameters for the simulation</p>
+                            <a href="/code/config/simulation_params.yaml" class="small">View Source</a>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Package Manifest</strong>
+                            <p class="small mb-0">Package dependencies and metadata</p>
+                            <a href="/code/package.xml" class="small">View Source</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
